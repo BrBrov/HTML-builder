@@ -6,7 +6,7 @@ const { stdin, stdout } = require('process');
 
 let way = path.resolve(__dirname, 'text.txt');
 let stream = fs.createWriteStream(way, 'utf-8');
-let str = readline.createInterface({ input: process.stdin, output: process.stdout });
+let str = readline.createInterface({ input: process.stdin, output: stream });
 
 let exitMessage = ()=>{
     console.log('Program already have been exit!');
@@ -16,19 +16,17 @@ console.log('Enter your text: ');
 
 str.on('line', (data)=>{
     if(data === 'exit'){
-        exitMessage();
         process.exit(1);
     }else{
-       console.log(data);
        stream.write(data); 
     }
 })
 
-process.on('beforeExit', ()=>{
-    console.log('Program already have been exit!');
+process.on('SIGINT', ()=>{  
+    process.exit(1);
 })
 
-str.on('SIGINT', ()=>{  
+process.on('exit', ()=>{
+    stream.end();
     exitMessage();
-    process.exit(2);
 })
