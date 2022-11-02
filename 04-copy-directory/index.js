@@ -22,4 +22,21 @@ let toDo = async function(way, copyPath){
 
 toDo(way, copyPath);
 
-
+// fs.mkdir(way, {recursive: true})
+// .then(result =>{
+    // if(!result){
+        // return fs.rm(way, {recursive: true}).then(r=>{
+        //    fs.mkdir(way); 
+        // })        
+    // }
+// })
+// .then(r=>{
+    // return fs.readdir(copyPath, {withFileTypes: true});
+// })
+// .then(arr=>{
+    // for(const dirent of arr){
+        // let pathScr = path.join(copyPath, dirent.name);  
+        // let pathFile = path.join(way, dirent.name);      
+        // fs.copyFile(pathScr, pathFile);
+    // }
+// })
