@@ -19,6 +19,7 @@ str.on('line', (data)=>{
         process.exit(1);
     }else{
        stream.write(data); 
+       stream.write('\n');
     }
 })
 
