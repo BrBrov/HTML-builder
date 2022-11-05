@@ -1,42 +1,31 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-let way = path.resolve(__dirname, 'files-copy');
-let copyPath = path.resolve(__dirname, 'files');
+let copy = path.resolve(__dirname, 'files-copy');
+let file = path.resolve(__dirname, 'files');
 
-let toDo = async function(way, copyPath){
-    let res = await fs.mkdir(way, {recursive: true});
-    if(!res){
-        await fs.rm(way, {recursive: true});
-        await fs.mkdir(way);
-    }
+async function processing(copy, file) {
+    let arr = await fs.readdir(file, { withFileTypes: true });
 
-    let arr = await fs.readdir(copyPath, {withFileTypes: true});    
-
-    for (const dirent of arr){
-        let pathScr = path.join(copyPath, dirent.name);  
-        let pathFile = path.join(way, dirent.name);      
-        fs.copyFile(pathScr, pathFile);
+    for await (const dirent of arr) {
+        let copyPath = path.join(copy, dirent.name);
+        let filePath = path.join(file, dirent.name);
+        if (dirent.isFile()) {
+            await fs.copyFile(filePath, copyPath);
+        } else {
+            fs.mkdir(copyPath);
+            await processing(copyPath, filePath);
+        }
     }
 }
 
-toDo(way, copyPath);
+let toDo = async function (copy, file, callback) {
+    let res = await fs.mkdir(copy, { recursive: true });
+    if (!res) {
+        await fs.rm(copy, { recursive: true });
+        await fs.mkdir(copy);
+    }
+    await callback(copy, file);
+}
 
-// fs.mkdir(way, {recursive: true})
-// .then(result =>{
-    // if(!result){
-        // return fs.rm(way, {recursive: true}).then(r=>{
-        //    fs.mkdir(way); 
-        // })        
-    // }
-// })
-// .then(r=>{
-    // return fs.readdir(copyPath, {withFileTypes: true});
-// })
-// .then(arr=>{
-    // for(const dirent of arr){
-        // let pathScr = path.join(copyPath, dirent.name);  
-        // let pathFile = path.join(way, dirent.name);      
-        // fs.copyFile(pathScr, pathFile);
-    // }
-// })
+toDo(copy, file, processing);
