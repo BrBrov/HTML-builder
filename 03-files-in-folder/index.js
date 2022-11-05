@@ -11,7 +11,7 @@ fs.readdir(way, {withFileTypes: true}).then(arr=>{
                 let ext = path.extname(dirent.name);                
                 let nameFile = path.basename(dirent.name, ext);
                 ext = ext.slice(1);
-                let size = Math.ceil(info.size/1024);
+                let size = info.size/1024;
                 console.log(`${nameFile} - ${ext} - ${size}kb`);
             });
         }
